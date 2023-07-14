@@ -7,3 +7,5 @@ out/
 /broadcast/
 
 .env
+.gas-snapshot
+coverage.txt
