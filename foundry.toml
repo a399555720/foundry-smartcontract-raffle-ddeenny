@@ -1,0 +1,14 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+gas_reports = ["Raffle"]
+remappings = ['@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/', '@solmate=lib/solmate/src/']
+
+[etherscan]
+sepolia = {key = "${ETHERSCAN_API_KEY}"}
+
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
