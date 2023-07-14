@@ -20,8 +20,7 @@ contract HelperConfig is Script {
         uint256 deployerKey; // Private key of the deployer
     }
 
-    uint256 public DEFAULT_ANVIL_PRIVATE_KEY =
-        0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
+    uint256 public DEFAULT_ANVIL_PRIVATE_KEY = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
 
     // Event emitted when a mock VRF coordinator is created.
     event HelperConfig__CreatedMockVRFCoordinator(address vrfCoordinator);
@@ -36,11 +35,7 @@ contract HelperConfig is Script {
     }
 
     // Returns the network configuration for Sepolia.
-    function getSepoliaEthConfig()
-        public
-        view
-        returns (NetworkConfig memory sepoliaNetworkConfig)
-    {
+    function getSepoliaEthConfig() public view returns (NetworkConfig memory sepoliaNetworkConfig) {
         sepoliaNetworkConfig = NetworkConfig({
             subscriptionId: 2742,
             gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c,
@@ -53,15 +48,9 @@ contract HelperConfig is Script {
     }
 
     // Returns the network configuration for Anvil or creates it if it doesn't exist.
-    function getOrCreateAnvilEthConfig()
-        public
-        returns (NetworkConfig memory anvilNetworkConfig)
-    {
+    function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory anvilNetworkConfig) {
         // If an active network configuration for Anvil already exists, return it.
-        if (
-            activeNetworkConfig.vrfCoordinatorV2 != address(0) ||
-            activeNetworkConfig.ethUsdPriceFeed != address(0)
-        ) {
+        if (activeNetworkConfig.vrfCoordinatorV2 != address(0) || activeNetworkConfig.ethUsdPriceFeed != address(0)) {
             return activeNetworkConfig;
         }
 
@@ -91,9 +80,7 @@ contract HelperConfig is Script {
         vm.stopBroadcast();
 
         // Emitan event indicating that a mock VRF coordinator has been created.
-        emit HelperConfig__CreatedMockVRFCoordinator(
-            address(vrfCoordinatorV2Mock)
-        );
+        emit HelperConfig__CreatedMockVRFCoordinator(address(vrfCoordinatorV2Mock));
 
         // Set the network configuration for Anvil.
         anvilNetworkConfig = NetworkConfig({

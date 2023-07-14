@@ -54,5 +54,5 @@ fundSubscription:
 	@forge script script/Interactions.s.sol:FundSubscription $(NETWORK_ARGS)
 
 enterRaffle:
-	@forge script script/EnterRaffle.s.sol:FundSubscription $(NETWORK_ARGS)
+	@forge script script/Interactions.s.sol:EnterRaffle $(NETWORK_ARGS)
 

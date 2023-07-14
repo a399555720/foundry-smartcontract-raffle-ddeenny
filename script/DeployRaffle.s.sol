@@ -25,19 +25,11 @@ contract DeployRaffle is Script {
         // If subscriptionId is 0, create a new subscription and fund it
         if (subscriptionId == 0) {
             CreateSubscription createSubscription = new CreateSubscription();
-            subscriptionId = createSubscription.createSubscription(
-                vrfCoordinatorV2,
-                deployerKey
-            );
+            subscriptionId = createSubscription.createSubscription(vrfCoordinatorV2, deployerKey);
 
             FundSubscription fundSubscription = new FundSubscription();
             // Fund the newly created subscription
-            fundSubscription.fundSubscription(
-                vrfCoordinatorV2,
-                subscriptionId,
-                link,
-                deployerKey
-            );
+            fundSubscription.fundSubscription(vrfCoordinatorV2, subscriptionId, link, deployerKey);
         }
 
         // Start a broadcast transaction with the deployer key
@@ -54,12 +46,7 @@ contract DeployRaffle is Script {
         vm.stopBroadcast();
 
         // Add the newly deployed Raffle contract as a consumer to the VRF Coordinator
-        addConsumer.addConsumer(
-            address(raffle),
-            vrfCoordinatorV2,
-            subscriptionId,
-            deployerKey
-        );
+        addConsumer.addConsumer(address(raffle), vrfCoordinatorV2, subscriptionId, deployerKey);
         // Return the instances of the deployed Raffle and HelperConfig contracts
         return (raffle, helperConfig);
     }

@@ -39,15 +39,7 @@ contract RaffleTest is StdCheats, Test {
         raffleEntranceFee = raffle.getEntranceFeeInEth();
         vm.deal(PLAYER, STARTING_USER_BALANCE);
         // Get the variables from the HelperConfig contract.
-        (
-            ,
-            gasLane,
-            callbackGasLimit,
-            vrfCoordinatorV2,
-            ethUsdPriceFeed,
-            ,
-
-        ) = helperConfig.activeNetworkConfig();
+        (, gasLane, callbackGasLimit, vrfCoordinatorV2, ethUsdPriceFeed,,) = helperConfig.activeNetworkConfig();
     }
 
     /////////////////////////
@@ -58,11 +50,8 @@ contract RaffleTest is StdCheats, Test {
     function testUsdToEthIsCorrect() public view {
         // Check that 100 USD is equal to the raffle entrance fee in ETH.
         assert(
-            100e18 /
-                PriceConverter.getPrice(
-                    AggregatorV3Interface(ethUsdPriceFeed)
-                ) ==
-                raffle.getEntranceFeeInEth() / 10e18
+            100e18 / PriceConverter.getPrice(AggregatorV3Interface(ethUsdPriceFeed))
+                == raffle.getEntranceFeeInEth() / 10e18
         );
     }
 
@@ -86,9 +75,7 @@ contract RaffleTest is StdCheats, Test {
     // Test that an error is thrown when the player doesn't pay enough ETH to enter the raffle.
     function testWhenYouDontPayEnoughETH() public {
         vm.prank(PLAYER);
-        bytes memory customError = abi.encodeWithSignature(
-            "Raffle__SendMoreToEnterRaffle()"
-        );
+        bytes memory customError = abi.encodeWithSignature("Raffle__SendMoreToEnterRaffle()");
         vm.expectRevert(customError);
         raffle.enterRaffle();
     }
@@ -97,9 +84,7 @@ contract RaffleTest is StdCheats, Test {
     function testChangeTheStateToCalculation() public {
         vm.prank(PLAYER);
         raffle.enterRaffle{value: raffleEntranceFee}();
-        bytes memory customError = abi.encodeWithSignature(
-            "Raffle__RaffleNotOpen()"
-        );
+        bytes memory customError = abi.encodeWithSignature("Raffle__RaffleNotOpen()");
         vm.prank(PLAYER);
         vm.expectRevert(customError);
         raffle.enterRaffle{value: raffleEntranceFee}();
@@ -146,34 +131,23 @@ contract RaffleTest is StdCheats, Test {
         raffle.enterRaffle{value: raffleEntranceFee}();
         Vm.Log[] memory entries = vm.getRecordedLogs();
         uint256 requestId = uint256(bytes32(entries[1].topics[1]));
-        VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(
-            requestId,
-            address(raffle)
-        );
+        VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(requestId, address(raffle));
         vm.expectEmit(true, false, false, false, address(raffle));
         emit RequestedRaffleWinner(requestId + 1);
         raffle.enterRaffle{value: raffleEntranceFee}();
     }
 
     // This function use fuzz testing tests that fulfillRandomWords can only be called if there is already a request ID
-    function testFulfillRandomWordsCanOnlyBeCalledAlreadyHaveRequestId(
-        uint256 requestId
-    ) public skipFork {
+    function testFulfillRandomWordsCanOnlyBeCalledAlreadyHaveRequestId(uint256 requestId) public skipFork {
         vm.prank(PLAYER);
         raffle.enterRaffle{value: raffleEntranceFee}();
         vm.assume(requestId > 1 || requestId == 0);
         vm.expectRevert("nonexistent request");
-        VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(
-            requestId,
-            address(raffle)
-        );
+        VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(requestId, address(raffle));
     }
 
     // This function tests that fulfillRandomWords picks a winner, resets the raffle, and sends the money
-    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney()
-        public
-        skipFork
-    {
+    function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public skipFork {
         uint256 startingBalance;
         uint256 raffleBalance;
         uint32 i;
@@ -190,15 +164,9 @@ contract RaffleTest is StdCheats, Test {
             if (i == 8) {
                 vm.expectEmit(true, false, false, false, address(raffle));
                 emit WinnerPicked(PLAYER);
-                VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(
-                    requestId,
-                    address(raffle)
-                );
+                VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(requestId, address(raffle));
             } else {
-                VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(
-                    requestId,
-                    address(raffle)
-                );
+                VRFCoordinatorV2Mock(vrfCoordinatorV2).fulfillRandomWords(requestId, address(raffle));
             }
             // If the recent random number is equal to the prize number, break out of the loop
             if (raffle.getRecentRandNum() == raffle.getPrizeNumber()) {

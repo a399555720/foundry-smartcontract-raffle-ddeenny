@@ -4,6 +4,7 @@ out = "out"
 libs = ["lib"]
 gas_reports = ["Raffle"]
 remappings = ['@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/', '@solmate=lib/solmate/src/']
+ffi = false
 
 [etherscan]
 sepolia = {key = "${ETHERSCAN_API_KEY}"}

@@ -14,7 +14,7 @@ library PriceConverter {
      * @return The latest price in ETH with 18 decimals
      */
     function getPrice(AggregatorV3Interface priceFeed) internal view returns (uint256) {
-        (, int256 answer, , , ) = priceFeed.latestRoundData();
+        (, int256 answer,,,) = priceFeed.latestRoundData();
         uint256 decimals = (18 - priceFeed.decimals());
         uint256 ethPrice = uint256(answer) * (10 ** decimals);
         return ethPrice;
